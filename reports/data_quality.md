@@ -1,8 +1,8 @@
-# Relatorio de qualidade de dados -- bikes_2026_01..06.csv
+# qualidade de dados -- bikes 2026
 
-Gerado em 2026-07-25 21:03. Este relatorio e so leitura/diagnostico; nenhum arquivo em data/processed/ foi criado ou alterado.
+gerado em 2026-07-25 23:02
 
-## 0. Consistencia de schema entre arquivos
+## 0. schema
 
 Todos os 6 arquivos tem as mesmas colunas, na mesma ordem: **True**.
 
@@ -16,9 +16,8 @@ Todos os 6 arquivos tem as mesmas colunas, na mesma ordem: **True**.
 | bikes_2026_06.csv | True |
 
 
-## 1. Volume por arquivo e gap temporal jan/fev
+## 1. volume por arquivo e gap jan/fev
 
-Criterio: o gap entre janeiro e fevereiro e apenas quantificado e documentado aqui -- **sem imputacao nem interpolacao**. Janeiro deve ser tratado como mes PARCIAL (dias 1 a 24) nas analises seguintes.
 
 | file | rows_raw | rows_dedup | duplicates_removed | min_last_reported | max_last_reported |
 | --- | --- | --- | --- | --- | --- |
@@ -29,15 +28,12 @@ Criterio: o gap entre janeiro e fevereiro e apenas quantificado e documentado aq
 | bikes_2026_05.csv | 637304 | 637304 | 0 | 2026-05-01 00:05:00 | 2026-05-31 23:55:00 |
 | bikes_2026_06.csv | 606511 | 606511 | 0 | 2026-06-01 00:05:00 | 2026-06-30 23:55:00 |
 
-**Gap jan/fev**: ultima leitura em janeiro em `2026-01-24 23:55:00`, primeira leitura em fevereiro em `2026-02-05 16:55:00` -- um buraco de **11 days 17:00:00** sem nenhuma leitura registrada, em nenhuma estacao.
+**gap jan/fev**: ultima leitura em `2026-01-24 23:55:00`, primeira de fevereiro em `2026-02-05 16:55:00` -- buraco de **11 days 17:00:00**, sem imputacao (janeiro conta como mes parcial).
 
 
-## 2. Completude -- nulos em colunas criticas
+## 2. completude -- nulos em colunas criticas
 
-Colunas que nunca deveriam ter nulo, por serem chave/identificacao de cada leitura:
-
-
-Total de nulos encontrados nas colunas criticas (todas os arquivos, todas as colunas): **0**.
+Total de nulos: **0**.
 
 | column | file | null_count |
 | --- | --- | --- |
@@ -61,23 +57,18 @@ Total de nulos encontrados nas colunas criticas (todas os arquivos, todas as col
 | last_reported | bikes_2026_06.csv | 0 |
 
 
-## 3. Duplicidade -- chave (station_id, last_reported)
+## 3. duplicidade -- chave (station_id, last_reported)
 
-Criterio: deduplicar por `(station_id, last_reported)`, mantendo a **primeira** ocorrencia (arquivos processados em ordem jan->jun). Isso tambem resolve overlap de timestamp entre arquivos.
-
-Total de linhas lidas: **3412090**. Total de duplicatas descartadas: **0** (**0.000%**). Linhas restantes apos dedup: **3412090**.
+Total lido: **3412090**. Duplicatas descartadas: **0** (**0.000%**). Restante: **3412090**.
 
 
-## 4. Violacoes de capacity
+## 4. violacoes de capacity
 
-Criterio: esperado `num_bikes_available + num_docks_available <= capacity`. Apenas reportando; nenhuma linha foi removida nesta etapa.
-
-Linhas avaliadas (capacity/bikes/docks nao nulos, apos dedup): **3412090**. Violacoes (`>` capacity): **102** (**0.0030%**).
+Linhas avaliadas: **3412090**. Violacoes (`bikes+docks > capacity`): **102** (**0.0030%**).
 
 
-## 5. Variantes de string nas colunas booleanas
+## 5. variantes de string nas colunas booleanas
 
-Valores brutos encontrados (somando os 6 arquivos), por coluna:
 
 | column | raw_value | count |
 | --- | --- | --- |
@@ -89,9 +80,8 @@ Valores brutos encontrados (somando os 6 arquivos), por coluna:
 | is_returning | false | 3434 |
 
 
-## 6. Cadencia de leitura (esperada: 5 em 5 minutos)
+## 6. cadencia de leitura
 
-Distribuicao dos 15 deltas mais comuns entre leituras consecutivas da mesma estacao:
 
 | delta_minutes | count | pct |
 | --- | --- | --- |
@@ -112,10 +102,10 @@ Distribuicao dos 15 deltas mais comuns entre leituras consecutivas da mesma esta
 | 55 | 42 | 0.001% |
 
 
-Total de buracos (delta > 5min) encontrados: **2136534**, sendo **2115249** de apenas 1 leitura faltando (o padrao rotineiro de 10min visto acima, nao necessariamente perda de dado) e **21285** com 2 ou mais leituras faltando seguidas (evidencia mais forte de buraco real).
+Buracos (delta > 5min): **2136534**, sendo **2115249** de 1 leitura faltando (padrao rotineiro de 10min) e **21285** com 2+ leituras faltando (buraco real).
 
 
-Os 15 maiores buracos (por leituras faltantes):
+Os 15 maiores:
 
 | station_id | gap_start | gap_end | missing_periods |
 | --- | --- | --- | --- |
@@ -136,11 +126,9 @@ Os 15 maiores buracos (por leituras faltantes):
 | 6 | 2026-01-24 23:50:00 | 2026-02-05 17:05:00 | 3374 |
 
 
-## 7. Timezone -- hora local irlandesa vs. UTC
+## 7. timezone -- local vs utc
 
-Criterio: observar o comportamento de `last_reported` na virada do horario de verao europeu (**2026-03-29**, ultimo domingo de marco/2026 -- relogios adiantam de 01:00 pra 02:00 na hora local, entao a hora local 01:00-01:59 simplesmente nao existe nesse dia).
-
-Buracos de leitura encontrados na janela 00:50-02:10 desse dia: **9**.
+Virada de horario de verao em **2026-03-29**. Buracos na janela 00:50-02:10: **9**.
 
 **Conclusao**: Nenhum buraco de leitura na janela da troca de horario de verao -- indicio de que last_reported esta em UTC (ou o dataset nao modela DST).
 
@@ -157,12 +145,9 @@ Buracos de leitura encontrados na janela 00:50-02:10 desse dia: **9**.
 | 62 | 2026-03-29 00:50:00 | 2026-03-29 01:05:00 | 2 |
 
 
-## 8. Tabela dimensao de estacoes (derivada das leituras)
+## 8. dimensao de estacoes (derivada das leituras)
 
-Criterio: `name`/`lat`/`lon`/`capacity` por estacao sao a MODA (valor mais frequente) observada nas leituras, nao um valor fixo de cadastro. `n_distinct_*` > 1 indica que o campo variou ao longo do periodo pra aquela estacao (potencial instabilidade de dado, nao necessariamente erro).
-
-
-Total de estacoes derivadas dos dados: **115**. Estacoes com pelo menos 1 campo instavel ao longo do tempo: **17**.
+Estacoes: **115**. Com algum campo instavel ao longo do tempo: **17**.
 
 | station_id | name_mode | n_distinct_name | lat_mode | n_distinct_lat | lon_mode | n_distinct_lon | capacity_mode | n_distinct_capacity | n_readings |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -185,16 +170,14 @@ Total de estacoes derivadas dos dados: **115**. Estacoes com pelo menos 1 campo 
 | 7 | HIGH STREET | 1 | 53.34342 | 2 | -6.2744136 | 2 | 29 | 1 | 27619 |
 
 
-## 9. Reconciliacao com stations.csv (referencia)
+## 9. reconciliacao com stations.csv
 
-Criterio: stations.csv NAO e usado pra corrigir a dimensao derivada -- so pra apontar divergencias.
+So nas leituras: **['1', '14', '20', '35', '60', '70']**
 
-Estacoes so nas leituras (nao cadastradas em stations.csv): **['1', '14', '20', '35', '60', '70']**
-
-Estacoes so no cadastro (nunca apareceram nas leituras): **['81']**
+So no cadastro: **['81']**
 
 
-Divergencias de nome (case-insensitive): **1**
+Divergencias de nome: **1**
 
 | station_id | name_mode | name_ref |
 | --- | --- | --- |

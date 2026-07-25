@@ -1,48 +1,55 @@
-cat > CLAUDE.md << 'EOF'
 # Project rules
 
-This is a learning portfolio project. The author is a student
-building a foundation in data science. Optimize for clarity and
-teachability, never for cleverness or brevity.
+Projeto de portfolio, escrito por um estudante construindo base em
+ciencia de dados. Otimize para clareza e para o codigo parecer escrito
+a mao, nunca para esperteza ou concisao extrema.
 
 ## Code level
 
-Write code an intern would write and understand. Specifically:
+Escreva codigo que um estagiario escreveria e entenderia.
 
-ALLOWED
-- pandas, numpy, matplotlib, seaborn, scikit-learn, sqlalchemy
-- plain functions with clear names
-- explicit for loops when they read better than vectorized tricks
-- simple list comprehensions (one level, no nesting)
+PERMITIDO
+- pandas, numpy, matplotlib, seaborn, scikit-learn, sqlite3
+- funcoes simples com nomes claros
+- for loops explicitos quando lerem melhor que truques vetorizados
+- list comprehension simples, um nivel so
 - f-strings
 
-NOT ALLOWED unless I explicitly ask
+NAO PERMITIDO sem eu pedir
 - classes, decorators, generators, context managers
-- lambda beyond a trivial one-liner
-- nested comprehensions, chained method calls longer than 3 steps
+- lambda alem de uma linha trivial
+- comprehensions aninhadas, method chaining com mais de 3 passos
 - async, multiprocessing, threading
-- advanced typing (Protocol, TypeVar, Generic)
-- config frameworks, dependency injection, abstract base classes
-- one-liners that pack several operations together
+- typing avancado (Protocol, TypeVar, Generic)
+- frameworks de config, injecao de dependencia, ABCs
+- one-liners que juntam varias operacoes
 
 ## Style
 
-- One function does one thing. Under 20 lines.
-- Comment every non-obvious line with what the function receives
-  and what it returns.
-- Prefer explicit and verbose over compact and clever.
-- No premature abstraction. Repeat code before generalizing it.
-- Variable names in full words: station_id, not sid.
-
-## Workflow
-
-- Explain the approach before writing code. Wait for confirmation.
-- After writing, list the functions I need to be able to explain
-  in an interview.
-- Never introduce a library that is not already in requirements.txt
-  without asking first.
+- Uma funcao faz uma coisa. Menos de 20 linhas.
+- Docstring so quando o proposito nao for obvio pelo nome. Uma linha,
+  sem template "Recebe / Devolve".
+- Comentario explica POR QUE, nunca O QUE. Se a linha ja diz, corta.
+- A maioria das funcoes nao deve ter comentario nenhum.
+- Sem banner de secao, sem divisor ASCII, sem cabecalho decorativo.
+- Docstring de modulo: 1 a 3 linhas. Sem redacao.
+- Explicito melhor que esperto, mas sem ser verboso a toa.
+- Nomes de variavel por extenso: station_id, nao sid.
+- Sem abstracao prematura. Repita antes de generalizar.
 
 ## Language
 
-All code, comments, commit messages and documentation in English.
-EOF
+- Codigo em ingles: nomes de funcao, variaveis, colunas, arquivos.
+- Comentarios, docstrings e README em portugues.
+- Mensagens de commit em ingles, com os prefixos convencionais
+  (feat, fix, docs, refactor, chore).
+- Comentarios curtos e diretos, minusculas, sem ponto final.
+- Sem acento nos comentarios, para evitar problema de encoding.
+
+## Workflow
+
+- Explique a abordagem antes de escrever codigo. Espere confirmacao.
+- Depois de escrever, liste as funcoes que eu preciso saber explicar
+  numa entrevista.
+- Nao introduza biblioteca que ainda nao esta no requirements.txt sem
+  perguntar antes
