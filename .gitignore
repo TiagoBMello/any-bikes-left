@@ -222,3 +222,7 @@ data/raw/
 data/processed/
 models/*.pkl
 .env
+
+data/
+
+data/
