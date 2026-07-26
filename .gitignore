@@ -220,7 +220,6 @@ __marimo__/
 # project
 data/raw/
 data/processed/
-models/*.pkl
 .env
 
 data/
