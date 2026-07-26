@@ -218,10 +218,21 @@ __marimo__/
 .streamlit/secrets.toml
 
 # project
-data/raw/
-data/processed/
 .env
 
-data/
+data/*
+!data/stations.csv
 
-data/
+notebooks/05_interpretability.ipynb
+src/check_data.py
+reports/data_quality.md
+
+notebooks/05_interpretability.ipynb
+src/check_data.py
+reports/data_quality.md
+
+CLAUDE.md
+
+notebooks/05_interpretability.ipynb
+src/check_data.py
+reports/data_quality.md
